@@ -30,7 +30,7 @@ const Interview = () => {
   const isRunning = useTimerStore((state) => state.isRunning);
   const setId = useTimerStore((state) => state.setId);
   const [recordingId, setRecordingId] = useState<any>(null);
-
+  const [isComplete, setIsComplete] = useState(false);
   const [open, setOpen] = useState(true);
   const [fullname, setFullname] = useState<any>("");
   const notify = () => toast(`Welcome ${fullname}`);
@@ -90,12 +90,22 @@ const Interview = () => {
   };
   // ================= Web Recorder Imports ==========================
   useEffect(() => {
+    console.log(recordingId);
     if (isRunning === false && id.length > 5) {
-      stopRecording(recordingId);
-      download(recordingId);
-      clearPreview(recordingId);
+      handleDownload();
     }
   }, [isRunning]);
+
+  const handleDownload = () => {
+    stopRecording(recordingId)
+      .then(() =>
+        setTimeout(() => {
+          setIsComplete(true);
+        }, 500)
+      )
+      .then(async () => await download(recordingId))
+      .finally(async () => await clearPreview(recordingId));
+  };
 
   const handleSubmit = () => {
     setOpen(false);
@@ -115,17 +125,17 @@ const Interview = () => {
 
   return (
     <div>
-      <div className=" h-full w-full text-gray-800 flex flex-col items-center gap-6 py-6">
-        <div className="text-2xl flex gap-2">
+      <div className="flex flex-col items-center w-full h-full gap-6 py-6 text-gray-800 ">
+        <div className="flex gap-2 text-2xl">
           <User />
           <p className="font-bold">User : </p>
           <h1> {fullname}</h1>
         </div>
-        <div className="flex gap-6 justify-center">
+        <div className="flex justify-center gap-6">
           <div className="flex flex-col gap-2">
             <h4 className="text-xl font-bold">Select video input</h4>
             <select
-              className="bg-cyan-500/20 px-4 py-2 rounded-lg"
+              className="px-4 py-2 rounded-lg bg-cyan-500/20"
               onChange={handleSelect}
             >
               {devicesByType?.video?.map((device) => (
@@ -138,7 +148,7 @@ const Interview = () => {
           <div className="flex flex-col gap-2">
             <h4 className="text-xl font-bold">Select audio input</h4>
             <select
-              className="bg-blue-500/20 px-4 py-2 rounded-lg"
+              className="px-4 py-2 rounded-lg bg-blue-500/20"
               onChange={handleSelect}
             >
               {devicesByType?.audio?.map((device) => (
@@ -150,17 +160,17 @@ const Interview = () => {
           </div>
         </div>
 
-        <button onClick={start} className="bg-emerald-400 p-4 rounded-3xl">
+        <button onClick={start} className="p-4 bg-emerald-400 rounded-3xl">
           Open camera
         </button>
 
         <div className="w-2/3 h-full p-8 ">
           {activeRecordings?.map((recording: any) => (
             <div
-              className="flex flex-col gap-2 items-center"
+              className="flex flex-col items-center gap-2"
               key={recording.id}
             >
-              <p className="font-bold text-2xl">
+              <p className="text-2xl font-bold">
                 <strong className="text-green-500">✦ </strong>Live
               </p>
               <div className="flex gap-6 ">
@@ -177,7 +187,7 @@ const Interview = () => {
                   {recording.audioLabel}
                 </small>
               </div>
-              <div className="w-full h-full rounded-2xl overflow-hidden">
+              <div className="w-full h-full overflow-hidden rounded-2xl">
                 <video
                   ref={recording.webcamRef}
                   loop
@@ -209,11 +219,11 @@ const Interview = () => {
                 Record
               </button>
 
-              <div className="w-full h-full flex flex-col gap-4 mt-4 justify-center items-center">
-                <p className="font-bold text-2xl">
+              <div className="flex flex-col items-center justify-center w-full h-full gap-4 mt-4">
+                <p className="text-2xl font-bold">
                   <strong className="text-blue-500">◉ </strong>Preview
                 </p>
-                <div className="w-full h-full rounded-2xl overflow-hidden">
+                <div className="w-full h-full overflow-hidden rounded-2xl">
                   <video ref={recording.previewRef} autoPlay loop playsInline />
                 </div>
               </div>
@@ -227,7 +237,7 @@ const Interview = () => {
             <DialogTitle>Please Enter Your Fullname</DialogTitle>
             <DialogDescription>
               <Input
-                className="w-full border-2 border-gray-300 my-4"
+                className="w-full my-4 border-2 border-gray-300"
                 placeholder="Username"
                 onChange={(e) => setFullname(e.target.value)}
               />
