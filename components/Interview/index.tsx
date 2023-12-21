@@ -19,6 +19,7 @@ import { Button } from "../ui/button";
 import CryptoJS from "crypto-js";
 import { toast } from "react-toastify";
 import { User } from "lucide-react";
+import Questions from "../Questions";
 
 const SECRET_PASS = "xfosoft";
 
@@ -33,13 +34,14 @@ const Interview = () => {
   const [isComplete, setIsComplete] = useState(false);
   const [open, setOpen] = useState(true);
   const [fullname, setFullname] = useState<any>("");
-  const notify = () => toast(`Welcome ${fullname}`);
+
   const [encrptedData, setEncrptedData] = useState(""); // Encrypted data
   const [decrptedData, setDecrptedData] = useState(""); // Decrypted data
 
   const time = new Date();
   time.setSeconds(time.getSeconds() + 30);
 
+  const notify = () => toast(`Welcome ${fullname}`);
   // ================= Web Recorder Imports ==========================
   const OPTIONS: any = {
     fileName: String(fullname),
@@ -104,7 +106,9 @@ const Interview = () => {
         }, 500)
       )
       .then(async () => await download(recordingId))
-      .finally(async () => await clearPreview(recordingId));
+      .finally(async () =>
+        toast.success("Interview was successfully recorded.")
+      );
   };
 
   const handleSubmit = () => {
@@ -124,8 +128,8 @@ const Interview = () => {
   };
 
   return (
-    <div>
-      <div className="flex flex-col items-center w-full h-full gap-6 py-6 text-gray-800 ">
+    <div className="grid w-full h-full grid-cols-3 gap-4">
+      <div className="flex flex-col items-center w-full h-full col-span-2 gap-6 py-6 text-gray-800 ">
         <div className="flex gap-2 text-2xl">
           <User />
           <p className="font-bold">User : </p>
@@ -164,7 +168,7 @@ const Interview = () => {
           Open camera
         </button>
 
-        <div className="w-2/3 h-full p-8 ">
+        <div className="w-full h-full p-12 ">
           {activeRecordings?.map((recording: any) => (
             <div
               className="flex flex-col items-center gap-2"
@@ -226,10 +230,19 @@ const Interview = () => {
                 <div className="w-full h-full overflow-hidden rounded-2xl">
                   <video ref={recording.previewRef} autoPlay loop playsInline />
                 </div>
+                <button
+                  className="block p-2 text-white bg-red-500 rounded-md w-fit"
+                  onClick={() => clearPreview(recordingId)}
+                >
+                  Clear Preview
+                </button>
               </div>
             </div>
           ))}
         </div>
+      </div>
+      <div className="w-full h-full gap-6 bg-slate-100">
+        {encrptedData.length > 5 && <Questions />}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">
