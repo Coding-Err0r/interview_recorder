@@ -32,7 +32,7 @@ const Interview = () => {
   const setId = useTimerStore((state) => state.setId);
   const [recordingId, setRecordingId] = useState<any>(null);
   const [isComplete, setIsComplete] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [fullname, setFullname] = useState<any>("");
 
   const [encrptedData, setEncrptedData] = useState(""); // Encrypted data
