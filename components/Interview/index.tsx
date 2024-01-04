@@ -32,7 +32,7 @@ const Interview = () => {
   const setId = useTimerStore((state) => state.setId);
   const [recordingId, setRecordingId] = useState<any>(null);
   const [isComplete, setIsComplete] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [fullname, setFullname] = useState<any>("");
 
   const [encrptedData, setEncrptedData] = useState(""); // Encrypted data
@@ -242,7 +242,8 @@ const Interview = () => {
         </div>
       </div>
       <div className="w-full h-full gap-6 bg-slate-100">
-        {encrptedData.length > 5 && <Questions />}
+        {/* {encrptedData.length > 5 && <Questions />} */}
+        <Questions />
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">
